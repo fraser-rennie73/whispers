@@ -1,0 +1,8 @@
+[2026-08-11 15:30:50] ERROR: Gemini returned an invalid summary.
+[2026-08-12 06:09:06] ERROR: Gemini returned an invalid summary.
+[2026-08-12 06:14:16] ERROR: Gemini returned an invalid summary. {"length":410}
+[2026-08-12 06:15:34] ERROR: Gemini returned an invalid summary. {"length":422}
+[2026-08-12 06:25:04] ERROR: Gemini returned an invalid summary. {"length":421}
+[2026-10-24 13:35:37] ERROR: Gemini API request failed {"http_code":0,"attempt":1,"max_attempts":4,"message":null}
+[2026-10-24 13:35:58] ERROR: Gemini API request failed {"http_code":0,"attempt":2,"max_attempts":4,"message":null}
+[2026-10-25 19:07:06] ERROR: Gemini API request failed {"http_code":0,"attempt":1,"max_attempts":4,"message":null}

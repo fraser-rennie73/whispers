@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta property="og:title" content="There's a Cabin in the Pines">
+    <meta property="og:description" content="It is close. There are deceits. A second laboratory is required. The cost is great. They will build it. Trust is impossible. They cannot be thought upon. They cannot be dealt with, and yet they must.">
+    <meta property="og:image" content="https://fraser.epizy.com/php/Images/citp_bg.jpg">
+    <meta property="og:url" content="https://fraser.epizy.com/php/Index.php">
+    <meta property="og:type" content="website">
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poiret+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Limelight&display=swap" rel="stylesheet">
+    <title>Whispers From The Void</title>
+    <script>
+        window.onload = function () {
+            // Get the query string (everything after ?)
+            //const queryString = window.location.search;
+			const parts = document.URL.split("?");
+			let suffix = "";
+			if (parts.length > 1) {
+				suffix = "?" + parts[1];
+			}
+
+            // Define the target page
+            const targetPage = "https://fraser.epizy.com/php/Index.php";
+
+            // Redirect while preserving the query string
+            setTimeout(function () {
+    window.location.href = targetPage + suffix;
+}, 2000);
+        };
+    </script>
+    <style>
+		div, h1, p { margin: 0; padding: 0; font-weight: normal; font-size: 100%; }
+        body
+{
+	font-family: 'Courier New', 'Times New Roman', Serif;
+	background-color: #000020;
+	color: #fff;
+	padding: 1em;
+    background: #000020;
+    font-size: 100%;
+	height: 100vh;
+
+	background: url(Images/citp_bg.jpg);
+	background-size: cover;
+}
+        
+        .page {
+            display: flex;
+			flex-direction: column;
+            justify-content: center;
+            align-items: center;
+			text-align: center;
+			gap: 1em;
+        }
+		h1 {
+  font-family: "Poiret One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 250%;
+			text-transform: uppercase;
+		}
+		h1 span {
+			display: block;
+			line-height: 0.9;
+		}
+		h1 span:first-child {
+			letter-spacing: 0.2em;
+		}
+		h1 span:not(:first-child):not(:last-child) {
+			font-size: 75%;
+			letter-spacing: 0.4em;
+		}
+		h1 span:last-child {
+			font-size: 166%;
+			font-family: "Limelight", sans-serif;
+		}
+		h1 span:last-child::before,
+		h1 span:last-child::after {
+			content: "-";
+		}
+    </style>
+</head>
+<body>
+    <div class="page">
+      <h1><span>Whispers</span><span>From The</span><span>Void</span></h1>
+      <h1>There's a Cabin in the Pines</h1>
+	  <p>It is close. There are deceits. A second laboratory is required. The cost is great. They will build it. Trust is impossible. They cannot be thought upon. They cannot be dealt with, and yet they must.</p>
+	  <p>Redirecting, please wait...</p>
+    </div>
+</body>
+      </html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="x-ua-compatible" content="IE-edge" />
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<title>Zoomthulhu Investigators</title>
+	<meta property="description" content="All the Investigators for the Zoomthulhu Call Of Cthulhu game.">
+	<meta property="og:title" content="Zoomthulhu Investigators">
+	<meta property="og:description" content="All the Investigators for Zoomthulhu.">
+	<meta property="og:url" content="https://fraser.epizy.com/php/investigators.html">
+	<meta property="og:image" content="https://fraser.epizy.com/php/Images/banner.jpg">
+	<meta property="og:image:width" content="1000">
+	<meta property="og:image:height" content="848">
+	<meta property="og:type" content="website">
+	<link href='https://fonts.googleapis.com/css?family=Poiret+One' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Special+Elite' rel='stylesheet' type='text/css'>
+	<script src="CharacterSheet/investigators.js?v=010"></script>
+    <style type="text/css">
+
+        body
+        {
+            padding: 1em 0.33em 3em 0.33em;
+
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        html, *             { scroll-behavior: smooth; }
+        *                   { box-sizing: border-box; }
+        *::before, *::after { box-sizing: inherit; }
+
+        html
+        {
+            /*
+            background: url(Images/banner.jpg);
+            background-size: cover;
+            background-position: top center;
+            background-attachment: fixed;
+            */
+            background-color: rgb(107, 125, 175);
+            /*padding-top: 80px;*/
+        }
+
+        #background
+        {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            transform: scale(1.1);
+        }
+        #background::after
+        {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url(Images/banner.jpg);
+            background-size: cover;
+            background-position: top center;
+            background-repeat: no-repeat;
+        }
+
+        a { text-decoration: none; }
+
+        h1
+        {
+            padding: 0; margin: 0;
+            font-weight: normal;
+            text-transform: uppercase;
+            font-family: 'Poiret One';
+            color: #fff;
+            text-shadow: 4px 4px 6px #000;
+            text-align: center;
+            margin-bottom: 0.5em;
+        }
+
+        #investigator-cards
+        {
+            display: flex;
+        }
+
+        .investigator-card
+        {
+            position: relative;
+            background-color: rgba(0,0,0, 0.66);
+            background-color: #f0f0f0;
+            color: #b4b4b4;
+            color: #999;
+            padding: 0;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            /*width: 14rem;*/
+            transition: all 1s ease;
+
+            box-shadow: 12px 12px 15px rgba(0,0,0, 0.33);
+        }
+        .investigator-card:hover
+        {
+            background-color: #fff;
+            color: #000;
+        }
+
+        .investigator-card > div.text
+        {
+            /*
+            order: 2;
+            flex-grow: 1;
+            align-self: flex-start;
+            */
+            /*
+            min-height: 8rem;
+            */
+            padding: 0 0.5em 0.5em 0.5em;
+        }
+        .investigator-card > div.text > div
+        {
+            text-align: center;
+        }
+        .investigator-card > div.text > div:first-child
+        {
+            display: block;
+            font-family: 'Poiret One';
+            color: #fff;
+            color: #777;
+            font-size: 133%;
+            font-weight: bold;
+            
+            padding-bottom: 0.25em;
+            border-bottom: 1px solid #999;
+            margin-bottom: 0.25em;
+            transition: all 1s ease;
+        }
+        .investigator-card:hover > div.text > div:first-child
+        {
+            color: #d00;
+        }
+
+        .investigator-card > div.text > div:nth-child(2)
+        {
+            font-size: 85%;
+        }
+        
+        .investigator-card > div
+        {
+            order: 2;
+            width: 100%;
+        }
+        .investigator-card > div.photo
+        {
+            order: 1;
+        }
+
+        .investigator-card > div.stats
+        {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 4px 6px;
+
+            font-size: 85%;
+            padding: 0 0.5em 0.5em 0.5em;
+        }
+        .investigator-card > div.more-stats
+        {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+
+            font-size: 90%;
+            padding: 0 0.5em 1em 0.5em;
+        }
+        .investigator-card > div.skills
+        {
+            columns: 2;
+
+            font-size: 80%;
+            padding: 0 0.5em 1em 0.5em;
+        }
+
+        .investigator-card > div.stats > div
+        {
+            width: 25%;
+            width: calc((100% - 18px) / 4);
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .investigator-card > div.more-stats > div
+        {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .investigator-card > div.skills > div
+        {
+            /*
+            width: calc((100% - 4px) / 2);
+            */
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .investigator-card > div.stats > div > :first-child,
+        .investigator-card > div.more-stats > div > :first-child,
+        .investigator-card > div.skills > div > :first-child
+        {
+            font-style: italic;
+            font-size: 90%;
+        }
+        .investigator-card > div.stats > div > :last-child,
+        .investigator-card > div.more-stats > div > :last-child,
+        .investigator-card > div.skills > div > :last-child
+        {
+            /*font-family: 'Courier New', Courier, monospace;*/
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .investigator-card img
+        {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            object-position: top center;
+
+            /*
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4em;
+            aspect-ratio: 1/1.5;
+            */
+        }
+
+        /* **************************************************************************************************** */
+        /* layout for screens
+        /* **************************************************************************************************** */
+
+        @media screen and (min-width: 701px) 
+        {
+            h1
+            {
+                font-size: 350%;
+            }
+            h1::before, h1::after
+            {
+                content: '-';
+            }
+            #investigator-cards
+            {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            .investigator-card
+            {
+                flex: 1 1 15rem;
+                min-width: 9rem;
+                max-width: 17rem;
+            }
+        }
+
+        /* **************************************************************************************************** */
+        /* layout for phones
+        /* **************************************************************************************************** */
+
+        @media screen and (max-width: 700px) 
+        {
+            body
+            {
+                font-size: 150%;
+            }
+
+            h1
+            {
+                font-size: 200%;
+            }
+
+            #investigator-cards
+            {
+                flex-direction: column;
+                align-items: center;
+                gap: 1em;
+            }
+            .investigator-card
+            {
+                width: 21rem;
+                width: 100%;
+                background-color: #fff;
+                color: #000;
+            }
+            .investigator-card > div.text > div:first-child
+            {
+                color: #d00;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="background"></div>
+    <h1>Investigators</h1>
+    <!--<p>Click an investigator card to view the character sheet.</p>-->
+
+	<div id="holder"></div>
+	
+	<script type="text/javascript">
+	<!--
+
+        function PostData( data, callback )
+        {
+            console.log( "PostData", data );
+            
+            fetch('CharacterSheet/character_sheet.php', {
+                method: 'POST', // or 'PUT'
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                if( !!callback ) callback.call( this, data );
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                if( !!callback ) callback.call( this, [] );
+            });
+        }
+
+        function FullName(investigator)
+        {
+            let components = [ ];
+            with (investigator.investigatorName)
+            {
+                components = [ title, first, middle, last ];
+            }
+            return(components.filter(c => c !== "").join(" "));
+        }
+
+        function TagBuilder(tagname, attributes, tagvalue)
+        {
+            return {
+                tagname: tagname,
+                tagvalue: tagvalue || "",
+                attributes: attributes || {},
+                children: [],
+                addChild: function(child) { this.children.push(child); return this; },
+                toString: function() { 
+                    let html = "<" + this.tagname; 
+                    for(attr in this.attributes) { html += ' ' + attr + '="' + this.attributes[attr] + '"'}
+                    if( this.tagname === "img" ) html += "/>";
+                    else
+                    {
+                        html += ">";
+                        html += this.children.map(child => child.toString()).join("");
+                        html += this.tagvalue;
+                        html += "</" + this.tagname + ">";
+                    }
+
+                    return html;
+                }
+            };
+        }
+
+        function AllValues(source, className, exclude, onlyInclude) 
+        {
+            exclude = exclude || [];
+            onlyInclude = onlyInclude || [];
+
+            const wrapper = TagBuilder("div", {"class": className});
+
+            for( let prop in source ) {
+
+                let addProp = !( exclude.includes( prop ) );
+                if( addProp && onlyInclude.length ) addProp = onlyInclude.includes( prop );
+
+                if( addProp ) {
+                    const item = TagBuilder("div");
+                    item.addChild(TagBuilder("span", {}, prop));
+                    item.addChild(TagBuilder("span", {}, source[prop]));
+
+                    wrapper.addChild(item);
+                } 
+            }
+
+            return wrapper;
+        }
+
+        function NumberValue(title, value, groupName, state)
+        {
+            let current = state?.radios[ groupName ] || value;
+
+            const item = TagBuilder("div");
+            item.addChild(TagBuilder("span", {}, title));
+            item.addChild(TagBuilder("span", {}, `${current} / ${value}`));
+
+            return item;
+        }
+
+        function NumberValues(inv, state)
+        {
+            const wrapper = TagBuilder("div", {"class": "more-stats"});
+
+            wrapper.addChild(NumberValue("Sanity Points", inv.sanityPoints, "sanity-points-group", state));
+            wrapper.addChild(NumberValue("Hit Points", inv.hitPoints, "hit-points-group", state));
+            wrapper.addChild(NumberValue("Magic Points", inv.magicPoints + inv.magicPointBonus, "magic-points-group", state));
+
+            return wrapper;
+        }
+
+        function KeySkills(inv, numberOfSkills)
+        {
+            if(!numberOfSkills) numberOfSkills = 6;
+            const skills = [];
+
+            if( inv.skills ) 
+            {
+                for(var prop in inv.skills)
+                    if(inv.skills[prop] > 5) 
+                        skills.push({ key: prop, value: inv.skills[prop] });
+            }
+
+            if( inv.weapons )
+            {
+                if( inv.weapons.melee )
+                {
+                    inv.weapons.melee.forEach(w => {
+                        skills.push({ key: w.name, value: w.skill });
+                    });
+                }
+
+                if( inv.weapons.firearm )
+                {
+                    inv.weapons.firearm.forEach(w => {
+                        const nm = w.name.split(" (")[0];
+                        const exists = skills.find(x => x.key === nm);
+
+                        if(!exists) skills.push({ key: nm, value: w.skill });
+                    });
+                }
+            }
+
+            let keySkills = {};
+            skills.forEach((s) => { keySkills[s.key] = s.value });
+            return keySkills;
+        }
+
+        function InvestigatorCard(inv, state, isPhone)
+        {
+            let card = TagBuilder("a", {
+                "id": inv.name,
+                "class": "investigator-card",
+                "href": inv.name + ".html"
+            });
+
+            let text = TagBuilder("div", {"class": "text"})
+                .addChild(
+                    TagBuilder("div", {}, FullName(inv))
+                );
+            
+            card.addChild(text);
+
+            const exclude = [ "Initiative", "Actions Per Round", "Damage Bonus" ];
+
+            const stats = AllValues(inv.stats, "stats", exclude);
+            card.addChild(stats);
+
+            const moreStats = AllValues(inv.stats, "more-stats", null, exclude);
+            card.addChild(moreStats);
+
+            if (!isPhone)
+            {
+                card.addChild(NumberValues(inv, state));
+
+                const skills = KeySkills(inv, 10);
+                const keySkills = AllValues(skills, "skills");
+                card.addChild(keySkills);
+            }
+
+            if( inv.image ) {
+                card.addChild(
+                    TagBuilder("div", {"class": "photo"})
+                        .addChild(TagBuilder("img", {"src": inv.image}))
+                );
+            }
+
+            return( card );
+        }
+
+        const isPhone = window.innerWidth <= 700;
+
+        function BuildPage(savedData)
+        {
+            let content = TagBuilder("div", {"id": "investigator-cards"});
+            console.log( savedData );
+
+            _investigators
+                .sort((a,b) => a.investigatorName.last.localeCompare(b.investigatorName.last))
+                .forEach((inv, i) => { 
+                    const state = savedData?.find((d) => d.id === inv.name);
+                    content.addChild( InvestigatorCard(inv, state, isPhone) );
+                });
+
+            document.getElementById("holder").innerHTML = content.toString();
+        }
+
+        if( isPhone )
+            BuildPage([]);
+        else
+            PostData( { action: 'readAll' }, BuildPage );
+
+	//-->
+	</script>
+
+</body>
+</html>

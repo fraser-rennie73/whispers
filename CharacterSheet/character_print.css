@@ -1,0 +1,430 @@
+body
+{
+    font-size: 0.8em;
+}
+
+div 
+{
+    margin: 0; padding: 0;
+}
+
+.wrapper > div 
+{
+    break-inside: avoid;
+}
+
+.photo
+{
+    display: block;
+    box-sizing: border-box;
+
+    width: 200px;
+    aspect-ratio: 1/1.33;
+    object-fit: cover;
+    object-position: center top;
+
+    position: absolute;
+    top: 1em;
+    right: 1.5em;
+
+    border: 2px solid #000;
+    /*
+    transform: rotate(2deg);
+    border: 9px solid #fff;
+    outline: 1px solid #c0c0c0;
+    box-shadow: 12px 12px 12px rgba(0, 0, 0, 0.6), -5px 8px 5px rgba(0, 0, 0, 0.33);
+    */
+}
+
+.tabs,
+.fixedStats,
+.tab-anchor:not(#tab-more),
+input
+{
+    position: fixed;
+    top: 0;
+    clip: rect(0,0,0,0);
+}
+
+#tab-more
+{
+    width: 100%;
+    height: 1px;
+    padding: 0;
+    margin: 0;
+}
+
+
+.details,
+.stats,
+.moreStats,
+.name,
+.sanity-points
+{
+    width: calc( 100% - 240px );
+}
+
+.hit-points
+{
+    width: 230px;
+    position: absolute;
+    right: 0;
+    top: 23em;
+}
+
+.hide-print
+{
+    display: none;
+}
+
+.name
+{
+    font-size: 200%;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'Rockwell';
+    text-align: center;
+}
+
+td:first-child,
+.stats > div span:first-child,
+.moreStats > div span:first-child,
+.details > div span:first-child,
+.spell li > span:first-child
+{
+    font-family: Arial;
+    font-style: italic;
+    color: #a0a0a0;
+}
+
+.stats > div span:last-child,
+.moreStats > div span:last-child,
+.details > div span:last-child
+{
+    font-weight: bold;
+}
+.moreStats > div span:last-child,
+.details > div span:last-child
+{
+    float: right;
+}
+
+.stats
+{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+        
+.stats > div
+{
+    box-sizing: border-box;
+    flex-basis: 22%;
+    margin-bottom: 0.25em;
+    font-size: 110%;
+}
+
+.stats > div span:last-child
+{
+    float: right;
+}
+
+.numbers
+{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.wrapper
+{
+    text-align: center;
+}
+
+.wrapper > *
+{
+    text-align: left;
+}
+
+.numbers.weapon
+{
+    width: 45%;
+    display: inline-flex;
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+/*
+.numbers.weapon:nth-of-type(2n)
+{
+    float: right;
+}
+.numbers.weapon:last-of-type
+{
+    width: 100%;
+}
+*/
+
+.history
+{
+    clear: both;
+}
+
+.numbers .title,
+.history .title,
+.skills .title
+{
+    flex-basis: 100%;
+    font-size: 125%;
+    text-align: center;
+    padding-bottom: 0.125em;
+    border-bottom: 1px solid #666;
+    margin-bottom: 0.5em;
+    
+    color: #a0a0a0;
+}
+.numbers
+{
+    margin-bottom: 1em;
+}
+
+/*
+.numbers > *:not(.title)
+{
+    box-sizing: border-box;
+    height: 2em;
+    line-height: 1.75em;
+    text-align: center;
+    margin: 0 0.33em;
+}
+*/
+.numbers > label
+{
+    width: 2em;
+    text-align: center;
+    margin-bottom: 0.25em;
+}
+
+.skills label,
+.weapons label
+{
+    display: block;
+}
+
+.skills label::before,
+.weapons label::before
+{
+    content: '';
+    box-sizing: border-box;
+    display: inline-block;
+    width: 0.75em; 
+    height: 0.75em;
+    margin-right: 0.25em;
+    border: 1px solid #000;
+}
+
+.skills input:checked + label::before,
+.weapons input:checked + label::before
+{
+    background-color: #a00;
+    border: 2px solid #000;
+}
+
+.skills
+{
+    width: 100%;
+    column-width: 9em;
+    column-gap: 1.5em;
+}
+.skills .title
+{
+    column-span: all;
+}
+
+.skills > div
+{
+    height: 1.5em;
+}
+
+
+/*
+.skills > div
+{
+    padding-top: 0.5em;
+}
+*/
+
+.skills > div span:last-child
+{
+    float: right;
+    font-family: 'Courier New';
+}
+
+.numbers .highlight,
+.skills .highlight
+{
+    font-weight: bold;
+}
+
+.weapons
+{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.weapons > table:first-child
+{
+    width: 30%
+}
+.weapons > table:last-child
+{
+    width: 60%
+}
+
+.weapons th
+{
+    font-size: 90%;
+    font-style: italic;
+    font-weight: normal;
+    padding-bottom: 0.25em;
+    color: #999;
+    text-align: left;
+}
+.weapons th:first-child
+{
+    padding-left: 1em;
+}
+
+.income > div > *:first-child
+{
+    color: #a0a0a0;
+    font-style: italic;
+    display: block;
+}
+.income > div:not(.title)
+{
+    min-height: 3em;
+}
+.income > div + div
+{
+    margin-top: 0.5em;
+}
+
+body
+{
+    text-shadow: none; 
+    color: #000;
+    font-size: 80%;
+}
+.name
+{
+    text-shadow: none;
+    min-height: 0;
+}
+
+.details,
+.stats,
+.moreStats,
+.name
+{
+    width: 60%;
+}
+
+.numbers > *:not(.title)
+{
+    font-size: 85%;
+    /*
+    height: 2em;
+    line-height: 1.75em;
+    */
+    border: none;
+}
+
+.wrapper > div 
+{
+    break-inside: avoid;
+}
+.wrapper > div + div
+{
+    margin-top: 1em;
+}
+
+table
+{
+    font-size: 100%;
+}
+
+td:first-child,
+td:not(:first-child)
+{
+    font-weight: normal;
+    font-style: normal;
+    color: #000;
+}
+
+.skills
+{
+    column-width: 9em;
+    column-gap: 1em;
+    font-size: 95%;
+    color: #000;
+}
+.skills .highlight
+{
+    font-weight: bold;
+    color: #000;
+}
+
+.skills input:checked + label::before,
+.weapons input:checked + label::before
+{
+    background-color: rgba( 255, 255, 255, 0.25 );
+    border: 1px solid rgba( 255, 255, 255, 0.3 );
+}
+
+.cdx-block
+{
+    padding: 0;
+}
+
+/* **************************************************************************************************** */
+/* spell */
+/* **************************************************************************************************** */
+
+.spell,
+.finances,
+.possessions
+{
+    box-sizing: border-box;
+    width: 50%;
+    /*float: left;*/
+    display: inline-block;
+    padding: 0 0.25em;
+    vertical-align: top;
+}
+.finances:last-child,
+.possessions:last-child
+{
+    width: 100%;
+    padding: 0;
+}
+
+.spell .title
+{
+    font-size: 115%;
+    text-transform: uppercase;
+}
+
+.spell ul
+{
+    list-style: none;
+    padding-left: 0;
+    margin: 0.25em 0;
+}
+
+.spell .description
+{
+    font-size: 90%;
+}

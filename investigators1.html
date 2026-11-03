@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="x-ua-compatible" content="IE-edge" />
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<title>Zoomthulhu Investigators</title>
+	<meta property="description" content="All the Investigators for the Zoomthulhu Call Of Cthulhu game.">
+	<meta property="og:title" content="Zoomthulhu Investigators">
+	<meta property="og:description" content="All the Investigators for Zoomthulhu.">
+	<meta property="og:url" content="https://fraser.epizy.com/php/investigators.html">
+	<meta property="og:image" content="https://fraser.epizy.com/php/Images/banner.jpg">
+	<meta property="og:image:width" content="1000">
+	<meta property="og:image:height" content="848">
+	<meta property="og:type" content="website">
+	<link href='https://fonts.googleapis.com/css?family=Poiret+One' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Special+Elite' rel='stylesheet' type='text/css'>
+	<script src="CharacterSheet/investigators.js?v=010"></script>
+    <style type="text/css">
+
+        body
+        {
+            padding: 1em 0.5em 3em 0.5em;
+
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        html, *             { scroll-behavior: smooth; }
+        *                   { box-sizing: border-box; }
+        *::before, *::after { box-sizing: inherit; }
+
+        html
+        {
+            /*
+            background: url(Images/banner.jpg);
+            background-size: cover;
+            background-position: top center;
+            background-attachment: fixed;
+            */
+            background-color: rgb(107, 125, 175);
+            /*padding-top: 80px;*/
+        }
+
+        #background
+        {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            transform: scale(1.1);
+        }
+        #background::after
+        {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url(Images/banner.jpg);
+            background-size: cover;
+            background-position: top center;
+            background-repeat: no-repeat;
+        }
+
+        a { text-decoration: none; }
+
+        h1
+        {
+            padding: 0; margin: 0;
+            font-weight: normal;
+            text-transform: uppercase;
+            font-family: 'Poiret One';
+            color: #fff;
+            text-shadow: 4px 4px 6px #000;
+            text-align: center;
+            margin-bottom: 0.5em;
+        }
+
+        #investigator-cards
+        {
+            display: flex;
+        }
+
+        .investigator-card
+        {
+            position: relative;
+            background-color: rgba(0,0,0, 0.5);
+            color: #b4b4b4;
+            padding: 0.5em;
+
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 0.5em;
+            min-height: 6em;
+            border-radius: 9px;
+            transition: all 1s ease;
+
+            overflow: hidden;
+
+
+            padding: 0;
+            border-radius: 0;
+            box-shadow: 9px 9px 15px rgba(0,0,0, 0.33);
+            gap: 0;
+            min-height: unset;
+        }
+        .investigator-card:hover
+        {
+            background-color: #fff;
+            color: #000;
+        }
+
+        .investigator-card > div.text
+        {
+            order: 2;
+            flex-grow: 1;
+            align-self: flex-start;
+            padding: 0.5em;
+        }
+        .investigator-card > div.text > div:first-child
+        {
+            display: block;
+            font-family: 'Poiret One';
+            color: #fff;
+            font-size: 133%;
+            font-weight: bold;
+            text-align: left;
+            
+            padding-bottom: 0.25em;
+            border-bottom: 1px solid #999;
+            margin-bottom: 0.25em;
+            transition: all 1s ease;
+        }
+        .investigator-card:hover > div.text > div:first-child
+        {
+            color: #d00;
+        }
+
+        .investigator-card > div.text > div:nth-child(2)
+        {
+            font-size: 85%;
+        }
+        
+        .investigator-card > div.photo
+        {
+            order: 1;
+        }
+
+        .investigator-card img
+        {
+            width: 4em;
+            height: 4em;
+            object-fit: cover;
+            object-position: top center;
+            border-radius: 50%;
+            border: 1px solid #777;
+
+            /*
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4em;
+            aspect-ratio: 1/1.5;
+            */
+        }
+
+        /* **************************************************************************************************** */
+        /* layout for screens
+        /* **************************************************************************************************** */
+
+        @media screen and (min-width: 701px) 
+        {
+            h1
+            {
+                font-size: 350%;
+            }
+            h1::before, h1::after
+            {
+                content: '-';
+            }
+            #investigator-cards
+            {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1em;
+            }
+            .investigator-card
+            {
+                flex: 0 1 24em;
+            }
+
+
+            .investigator-card > div.photo
+            {
+                height: 8em;
+            }
+
+            .investigator-card img
+            {
+                border-radius: 0;
+                border: none;
+                width: unset;
+                height: 100%;
+                aspect-ratio: 1;
+            }
+
+        }
+
+        /* **************************************************************************************************** */
+        /* layout for phones
+        /* **************************************************************************************************** */
+
+        @media screen and (max-width: 700px) 
+        {
+            body
+            {
+                font-size: 150%;
+            }
+
+            h1
+            {
+                font-size: 200%;
+            }
+
+            #investigator-cards
+            {
+                flex-direction: column;
+                gap: 1em;
+            }
+
+            .investigator-card
+            {
+                flex-grow: 1;
+                flex-direction: column;
+                gap: 0;
+                background-color: #fff;
+                color: #000;
+
+                text-align: center;
+            }
+            .investigator-card > div.text
+            {
+                padding-top: 0;
+            }
+            .investigator-card > div.text > div:first-child
+            {
+                color: #d00;
+                text-align: center;
+            }
+
+            .investigator-card > div.photo
+            {
+                width: 100%;
+            }
+
+            .investigator-card img
+            {
+                border-radius: 0;
+                border: none;
+                width: 100%;
+                height: unset;
+                aspect-ratio: 1;
+            }
+
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="background"></div>
+    <h1>Investigators</h1>
+    <!--<p>Click an investigator card to view the character sheet.</p>-->
+
+	<div id="holder"></div>
+	
+	<script type="text/javascript">
+	<!--
+        function FullName(investigator)
+        {
+            let components = [ ];
+            with (investigator.investigatorName)
+            {
+                components = [ title, first, middle, last ];
+            }
+            return(components.filter(c => c !== "").join(" "));
+        }
+
+        function TagBuilder(tagname, attributes, tagvalue)
+        {
+            return {
+                tagname: tagname,
+                tagvalue: tagvalue || "",
+                attributes: attributes || {},
+                children: [],
+                addChild: function(child) { this.children.push(child); return this; },
+                toString: function() { 
+                    let html = "<" + this.tagname; 
+                    for(attr in this.attributes) { html += ' ' + attr + '="' + this.attributes[attr] + '"'}
+                    if( this.tagname === "img" ) html += "/>";
+                    else
+                    {
+                        html += ">";
+                        html += this.children.map(child => child.toString()).join("");
+                        html += this.tagvalue;
+                        html += "</" + this.tagname + ">";
+                    }
+
+                    return html;
+                }
+            };
+        }
+
+        function InvestigatorCard(inv, prevName, nextName)
+        {
+            let card = TagBuilder("a", {
+                "id": inv.name,
+                "class": "investigator-card",
+                "href": inv.name + ".html"
+            });
+
+            let text = TagBuilder("div", {"class": "text"})
+                .addChild(
+                    TagBuilder("div", {}, FullName(inv))
+                );
+            
+            let desc = ""; 
+            if( inv.personalData && inv.personalData["Personal Description"] )
+                desc = inv.personalData["Personal Description"];
+            else if (inv.history && inv.history.length)
+                desc = inv.history[0];
+            else if( inv.details )
+            {
+                const details = [];
+                for(detail in inv.details)
+                {
+                    if(inv.details[detail]) details.push(detail + ": " + inv.details[detail]);
+                }
+                desc = details.join("; ");
+            }
+
+            if( desc ) 
+            {
+                const MAX_LEN = 150;
+                if(desc.length > MAX_LEN) desc = desc.substring(0, MAX_LEN).replace(/\s+\S*$/, "") + "...";
+                text.addChild( TagBuilder("div", {}, desc) );
+            }
+
+            card.addChild(text);
+
+            if( inv.image ) {
+                card.addChild(
+                    TagBuilder("div", {"class": "photo"})
+                        .addChild(TagBuilder("img", {"src": inv.image}))
+                );
+            }
+
+            //console.log(card.toString());
+            //console.log(inv.name, card);
+
+            return( card.toString() );
+        }
+
+        let jumps = '';
+        let content = '';
+
+        const sorted = _investigators.sort((a,b) => a.investigatorName.last.localeCompare(b.investigatorName.last));
+        let prev = sorted[sorted.length - 1].name;
+
+        sorted.forEach((inv, i) => { 
+
+            let next = sorted[i+1];
+            if( !next ) next = sorted[0];
+            
+            //jumps += PageJump(inv);
+            content += InvestigatorCard(inv, prev, next.name);
+
+            prev = inv.name;
+        });
+
+        //jumps = '<div id="investigator-jumps">' + jumps + '</div>';
+        content = '<div id="investigator-cards">' + content + '</div>';
+
+        document.getElementById( "holder" ).innerHTML = jumps + content;
+
+	//-->
+	</script>
+
+</body>
+</html>

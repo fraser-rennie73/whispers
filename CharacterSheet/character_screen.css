@@ -1,0 +1,875 @@
+body { color: #fff; background: #fff; font-size: 100%; font-family: Arial, 'Times New Roman', Serif; }
+body, div { margin: 0; padding: 0; }
+
+input[type=radio],
+input[type=checkbox]
+{
+    position: fixed;
+    top: 0;
+    clip: rect( 0,0,0,0 );
+}
+/*
+input[type=radio]:checked + label
+{
+    font-weight: bold;
+}
+*/
+
+html
+{
+    scroll-behavior: smooth;
+}
+
+body
+{
+    /*font-size: 90%;*/
+    font-size: 100%;
+    line-height: 1.3;
+    text-align: center;
+    background-color: #aaa;
+    background: radial-gradient( #fff, #ddd );
+    background: #000030;
+    text-shadow: 3px 3px 3px rgba( 0, 0, 0, 0.66 ); 
+}
+
+.wrapper
+{
+    /*
+    background-position: center center;
+    background-image: url(parchment.png);
+    background-size: 100% auto;
+    
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+    */
+    
+    padding: 0 1em 6.5em 1em;
+    text-align: left;
+    
+    background: linear-gradient(transparent 230px, rgba( 0, 0, 48, 0.85 ) 600px);
+    background: linear-gradient(transparent 200px, rgba( 0, 0, 48, 0.85 ) 650px, rgba( 0, 0, 48, 0.85 ));
+}
+
+@media screen and (min-width: 800px) 
+{
+    .wrapper
+    {
+        background: linear-gradient(transparent 230px, rgba( 0, 0, 48, 0.85 ) 600px);
+        background: linear-gradient(transparent 230px, rgba( 0, 0, 48, 0.85 ) 800px, rgba( 0, 0, 48, 0.85 ));
+    }
+}
+
+.photo
+{
+    box-sizing: border-box;
+    border: 9px solid #fff;
+    box-shadow: 12px 12px 12px rgba(0, 0, 0, 0.6), -5px 8px 5px rgba(0, 0, 0, 0.33);
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    /*
+    height: 20em;
+    */
+    transition: all 0.5s ease;
+    
+    margin-bottom: 1em;
+    
+    /*
+    position: fixed;
+    top: 9em;
+    left: 50%;
+    z-index: -1;
+    transform: translateX(-50%);
+    */
+    
+    width: 210px;
+    aspect-ratio: 1/1.25;
+    object-fit: cover;
+    object-position: center top;
+
+    position: fixed;
+    top: 9em;
+    left: calc( 50% - 105px );
+    z-index: -1;
+
+}
+
+.hideScreen
+{
+    display: none;
+    position: absolute;
+    top: 0; left: 0;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+}
+
+/*
+.photo:hover
+{
+    transform: scale(1.075) rotate(2deg);
+}
+*/
+
+/* ---------------------------------------------------------------------------------------------------- */
+
+.tabs
+{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 5.5em;
+    border-top: 2px solid #000;
+    z-index: 999;
+    
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center; 
+    
+    /*
+    background-color: #fff;
+    background-color: #002;
+    background: radial-gradient( #004, #002 );
+    background: radial-gradient( #fff, #fafafa );
+    */
+    
+    background: #000010;
+}
+
+.tabs .whoami
+{
+    display: none;
+}
+
+.tabs a
+{
+    display: inline-block;
+    font-size: 133%;
+    text-transform: uppercase;
+    padding: 0.2em 0.5em;
+    color: #666;
+    transition: all 0.5s ease;
+    text-decoration: none;
+    
+    color: #d4d4d4;
+}
+.tabs a:hover
+{
+    cursor: pointer;
+    color: #000;
+    transform: scale(1.25);
+    
+    color: #fff;
+}
+.tabs a:active
+{
+    color: #c00;
+    color: #e00;
+}
+
+.tab-anchor
+{
+    height: 5em;
+}
+
+/* ---------------------------------------------------------------------------------------------------- */
+
+.fixedStats
+{
+    position: fixed;
+    max-width: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+    background-color: #000;
+    color: #999;
+    height: 4em;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    z-index: 900;
+}
+
+.fixedStats > div
+{
+    margin: 0 0.33em;
+}
+.fixedStats > div:nth-child(n+14)
+{
+    display: none;
+}
+.fixedStats > div:nth-child(4n)
+{
+    margin-right: 1em;
+}
+.fixedStats > div > *:first-child
+{
+    font-style: italic;
+}
+.fixedStats > div > *:first-child::after
+{
+    content: ':';
+}
+.fixedStats > div > *:last-child
+{
+    color: #c0c0d4;
+    color: #e0e0e0;
+    font-weight: bold;
+}
+
+@media screen and (min-width: 700px) 
+{
+    .wrapper
+    {
+        /*
+        padding: 0 3em 5em 3em;
+        max-width: 760px;
+        */
+        padding: 0 2em 5em 2em;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .tabs
+    {
+        height: 4em;
+
+        bottom: unset;
+        top: 0;
+    }
+    
+    .fixedStats
+    {
+        height: 3em;
+        top: unset;
+        bottom: 0;
+    }
+    
+    .photo
+    {
+        /*
+        float: right;
+        margin-left: 1.5em;
+        margin-bottom: 1em;
+        width: 25%;
+        */
+        
+        position: fixed;
+        top: 160px;
+        /*
+        left: 64.5%;
+        */
+        right: 1em;
+        z-index: -1;
+        transform: scale(1.075) rotate(3deg);
+    }
+
+    /*
+    .details,
+    .stats,
+    .moreStats,
+    .numbers,
+    .spell,
+    .history
+    {
+        margin-left: 3em;
+        margin-right: 3em;
+    }
+    */
+    
+    .photo
+    {
+        margin-right: 1em;
+    }
+    .details,
+    .stats,
+    .moreStats,
+    .name
+    {
+        width: 64%;
+        margin-left: 2em;
+    }
+    
+    .tabs a
+    {
+        margin: 0 0.75em;
+    }
+    
+}
+
+@media screen and (min-width: 1000px) 
+{
+    .fixedStats
+    {
+        top: 0;
+        right: calc( 100% - 7em );
+        right: unset;
+        height: auto;
+        width: 7.5rem;
+        flex-direction: column;
+        align-items: flex-end;
+        overflow: auto;
+        font-size: 90%;
+        padding-top: 5em;
+    }
+    
+    .fixedStats > div
+    {
+        margin-right: 1em;
+        margin-bottom: 0.5em;
+        font-size: 110%;
+        text-align: right;
+    }
+    .fixedStats > div:nth-child(n+14)
+    {
+        display: block;
+    }
+    .fixedStats > div:nth-child(n+13) > *:first-child
+    {
+        display: block;
+    }
+    .fixedStats > div:nth-child(4n)
+    {
+        margin-right: 1em;
+        margin-bottom: 2em;
+    }
+
+    .fixedStats > div > *:last-child
+    {
+        display: inline-block;
+        min-width: 1.75em;
+    }
+
+    .wrapper
+    {
+        max-width: 100%;
+        margin-left: 7.5rem;
+        padding: 0 2em 5em 2em;
+    }
+    .photo
+    {
+        /*
+        left: auto;
+        right: 6em;
+        */
+        left: 68%;
+        right: auto;
+        width: 300px;
+        top: 120px;
+    }
+    
+    .numbers,
+    .spell,
+    .history
+    {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .details,
+    .stats,
+    .moreStats
+    {
+        width: 50%;
+        max-width: 650px;
+        margin-left: 3em;
+    }
+    
+    .name
+    {
+        max-width: 100%;
+        margin-left: 0;
+    }
+    
+    .numbers
+    {
+        font-size: 110%;
+    }
+    
+    .tabs
+    {
+        justify-content: flex-end;
+    }
+    
+    .tabs .whoami
+    {
+        display: flex;
+        align-items: center;
+        position: absolute;
+        left: 1em;
+    }
+    
+    .tabs .whoami img
+    {
+        width: 40px;
+        clip-path: circle(40%);
+        margin-right: 0.5em;
+    }
+    .tabs .whoami span
+    {
+        font-size: 110%;
+        color: #a0a0a0;
+    }
+}
+
+.moreStats.sanity
+{
+    max-width: calc(100% - 2em);
+    width: 36em;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ---------------------------------------------------------------------------------------------------- */
+
+.stats
+{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 1em;
+    
+    margin-top: 2em;
+    margin-bottom: 1em;
+}
+        
+.stats > div
+{
+    box-sizing: border-box;
+    flex-basis: 22%;
+    margin-bottom: 0.25em;
+    font-size: 133%;
+}
+
+.stats > div span:last-child
+{
+    float: right;
+}
+
+td:first-child,
+.stats > div span:first-child,
+.moreStats > div span:first-child,
+.details > div span:first-child,
+.spell li > span:first-child
+{
+    font-family: Arial;
+    font-style: italic;
+    color: #a0a0a0;
+}
+td:first-child
+{
+    color: #fff;
+}
+
+.name
+{
+    font-size: 200%;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 0.58em;
+    font-family: 'Rockwell';
+    text-shadow: 6px 6px 6px rgba( 0, 0, 0, 0.66 ); 
+    
+    text-align: center;
+    
+    min-height: 320px;
+}
+
+@media screen and (min-width: 700px) 
+{
+    .name
+    {
+        letter-spacing: 4px;
+        font-size: 350%;
+        
+        margin-left: 0.86em;
+        margin-left: 0.44em;
+        line-height: 0.8;
+        
+        text-align: left;
+        min-height: 0;
+    }
+}
+
+.stats > div span:first-child
+{
+    font-size: 80%;
+}
+
+.moreStats,
+.details
+{
+    font-size: 110%;
+}
+
+.stats > div span:last-child,
+.moreStats > div span:last-child,
+.details > div span:last-child
+{
+    font-weight: bold;
+    color: #fff;
+}
+.moreStats > div span:last-child,
+.details > div span:last-child
+{
+    float: right;
+}
+
+.moreStats,
+.weapons,
+.details
+{
+    margin-top: 1.5em;
+    margin-bottom: 1em;
+}
+
+.weapons
+{
+    width: 100%;
+    /*
+    column-width: 18em;
+    column-gap: 2em;
+    column-rule: 1px solid #666;
+    */
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+
+table
+{
+    font-size: 110%;
+    margin-left: auto;
+    margin-right: auto;
+}
+td:not(:first-child), 
+th:not(:first-child)
+{
+    padding-left: 1em;
+    text-align: right;
+}
+
+th
+{
+    font-size: 90%;
+    font-style: italic;
+    font-weight: normal;
+    padding-bottom: 0.25em;
+    color: #999;
+}
+th:first-child
+{
+    text-align: left;
+    padding-left: 1.33em;
+}
+        
+td:not(:first-child)
+{
+    font-weight: bold;
+    color: #a0a0a0;
+}
+
+.skills label,
+.weapons label
+{
+    display: block;
+    cursor: pointer;
+    transition: all 0.33s ease;
+}
+.skills label:hover,
+.weapons label:hover
+{
+    color: #f00;
+}
+
+.skills label::before,
+.weapons label::before
+{
+    content: '';
+    box-sizing: border-box;
+    display: inline-block;
+    border-radius: 2px;
+    width: 0.75em; 
+    height: 0.75em;
+    margin-right: 0.25em;
+    
+    background-color: rgba( 255, 255, 255, 0.25 );
+    border: 1px solid rgba( 255, 255, 255, 0.3 );
+    
+    transition: all 0.33s ease;
+}
+.skills label:hover::before,
+.weapons label:hover::before
+{
+    background-color: rgba( 255, 0, 0, 0.25 );
+}
+
+.skills input:checked + label::before,
+.weapons input:checked + label::before
+{
+    background-color: #a00;
+    border: 1px solid #d4d4d4;
+}
+
+.skills
+{
+    width: 100%;
+    
+    column-width: 12em;
+    column-gap: 1.5em;
+    font-size: 115%;
+    
+    color: #a0a0a0;
+}
+.skills .title
+{
+    column-span: all;
+}
+
+.skills + .skills
+{
+    margin-top: 1em;
+}
+
+.skills > div
+{
+    padding-top: 0.5em;
+}
+
+@media screen and (max-width: 700px) 
+{
+    .skills > div:not(.title)
+    {
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+    button
+    {
+        font-size: 110%;
+    }
+}
+
+.skills > div span:last-child
+{
+    float: right;
+    font-weight: bold;
+}
+
+.skills .highlight
+{
+    font-weight: bold;
+    color: #700;
+    
+    font-weight: normal;
+    color: #fff;
+}
+
+.hit-points,
+.magic-points,
+.sanity-points,
+.weapon,
+.flesh-ward-value
+{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+button
+{
+    margin-bottom: 1em;
+    float: right;
+}
+
+.numbers .title,
+.history .title,
+.skills .title
+{
+    flex-basis: 100%;
+    font-size: 125%;
+    text-align: center;
+    padding-bottom: 0.25em;
+    border-bottom: 1px solid #666;
+    margin-bottom: 0.25em;
+    
+    color: #a0a0a0;
+}
+.numbers
+{
+    margin-bottom: 1em;
+}
+
+.numbers > *:not(.title)
+{
+    box-sizing: border-box;
+    font-size: 110%;
+    height: 2em;
+    line-height: 1.75em;
+    text-align: center;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    transition: all 0.25s ease;
+    margin: 0 0.33em;
+}
+.numbers > label
+{
+    width: 2em;
+}
+
+.numbers input[type=radio]:not(:checked) + label:hover
+{
+    cursor: pointer;
+    color: #900;
+    color: #e00;
+}
+
+.numbers label:hover
+{
+    transform: scale(1.25);
+}
+
+.numbers input[type=radio]:checked + label
+{
+    border-color: #b00;
+}
+
+.highlight
+{
+    font-weight: bold;
+}
+
+.spell
+{
+    text-align: justify;
+    color: #c0c0c0;
+    clear: both;
+}
+
+.spell 
+{
+    margin-top: 1.5em;
+    border-top: 1px solid #700;
+    padding-top: 1em;
+    
+    border-top: 1px solid #b00;
+}
+
+.spell .title
+{
+    color: #900;
+    color: #e00;
+
+    font-size: 115%;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.spell ul 
+{ 
+    margin: 0; 
+    margin-top: 0.25em;
+    list-style: none; 
+    padding-left: 0;
+}
+
+/*
+.spell li > span:first-child
+{
+    font-weight: bold;
+}
+*/
+
+.spell li > span:last-child
+{
+    color: #fff;
+    font-size: 115%;
+}
+
+
+.spell .description > span,
+.history .description > span
+{
+    display: block;
+    margin-top: 0.5em;
+    color: #d4d4d4;
+}
+
+.history p + p
+{
+    margin-top: 1em;
+}
+
+.history
+{
+    font-size: 110%;
+    text-align: left;
+}
+@media screen and (min-width: 800px) 
+{
+    .history
+    {
+        text-align: justify;
+    }
+}
+
+.history .title
+{
+    margin-bottom: 0.5em;
+}
+.history + .history
+{
+    margin-top: 2em;
+}
+
+.income > div > *:first-child
+{
+    font-weight: bold;
+    display: block;
+    
+    font-weight: normal;
+    color: #a0a0a0;
+}
+.income > div + div
+{
+    margin-top: 1em;
+}
+
+.hints > div > *:first-child
+{
+    display: inline-block;
+    font-weight: bold;
+    min-width: 9em;
+}
+
+.dreamwalk .description > span
+{
+    display: block;
+    margin-bottom: 0.5em;
+}
+
+.history p
+{
+    margin: 0;
+}
+.history b
+{
+    color: #f00;
+}
+
+.cdx-block
+{
+    line-height: 1.15;
+}
+.ce-block__content
+{
+    max-width: 100%;
+}
+.ce-toolbar__content
+{
+    max-width: 98%;
+}
+
