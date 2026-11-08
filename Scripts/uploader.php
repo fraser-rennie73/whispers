@@ -1,6 +1,6 @@
- <?php
+<?php
 
-require_once __DIR__ . '/Scripts/vendor/PHPWord/src/PhpWord/Autoloader.php';
+require_once 'vendor/PHPWord/src/PhpWord/Autoloader.php';
 \PhpOffice\PhpWord\Autoloader::register();
 
 use PhpOffice\PhpWord\IOFactory;
@@ -200,66 +200,79 @@ function getHeadingLevel($element)
 
 function docxToBlocks(string $fromFilename) {
 
-                $phpWord = IOFactory::load($fromFilename);
+    $phpWord = IOFactory::load($fromFilename);
 
-                $blocks = array();
+    $blocks = array();
 
-                foreach ($phpWord->getSections() as $section) {
+    foreach ($phpWord->getSections() as $section) {
 
-                    foreach ($section->getElements() as $element) {
+        foreach ($section->getElements() as $element) {
 
-                        /*
-                         * Paragraph / TextRun
-                         */
-                        if (
-                            $element instanceof TextRun ||
-                            $element instanceof Text
-                        ) {
+            /*
+                * Paragraph / TextRun
+                */
+            if (
+                $element instanceof TextRun ||
+                $element instanceof Text
+            ) {
 
-                            $paragraphHtml = paragraphToHtml($element);
+                $paragraphHtml = paragraphToHtml($element);
 
-                            if (trim(strip_tags($paragraphHtml)) === '') {
-                                continue;
-                            }
-
-                            /*
-                             * Headings
-                             */
-                            $headingLevel = getHeadingLevel($element);
-
-                            if ($headingLevel > 0) {
-                                $b = new DocBlock( DocBlock::HEADER, $paragraphHtml, $headingLevel );
-                                array_push( $blocks, $b );
-                                continue;
-                            }
-
-                            /*
-                             * Bullet/list items
-                             */
-                            if (isListItem($element)) {
-                                $b = new DocBlock( DocBlock::PARAGRAPH, 'â€¢ ' . $paragraphHtml );
-                                array_push( $blocks, $b );
-                                continue;
-                            }
-
-                            if ($paragraphHtml == '<b>' . strip_tags($paragraphHtml) . '</b>') {
-                                $b = new DocBlock( DocBlock::HEADER, strip_tags( $paragraphHtml ), 2 );
-                                array_push( $blocks, $b );
-                                continue;
-                            }
-
-                            /*
-                             * Normal paragraph
-                             */
-                            $b = new DocBlock( DocBlock::PARAGRAPH, $paragraphHtml );
-                            array_push( $blocks, $b );
-                        }
-                    }
+                if (trim(strip_tags($paragraphHtml)) === '') {
+                    continue;
                 }
-                $bb = new DocBlocks($blocks);
-                return json_encode($bb);
+
+                /*
+                    * Headings
+                    */
+                $headingLevel = getHeadingLevel($element);
+
+                if ($headingLevel > 0) {
+                    $b = new DocBlock( DocBlock::HEADER, $paragraphHtml, $headingLevel );
+                    array_push( $blocks, $b );
+                    continue;
+                }
+
+                /*
+                    * Bullet/list items
+                    */
+                if (isListItem($element)) {
+                    $b = new DocBlock( DocBlock::PARAGRAPH, 'â€¢ ' . $paragraphHtml );
+                    array_push( $blocks, $b );
+                    continue;
+                }
+
+                if ($paragraphHtml == '<b>' . strip_tags($paragraphHtml) . '</b>') {
+                    $b = new DocBlock( DocBlock::HEADER, strip_tags( $paragraphHtml ), 2 );
+                    array_push( $blocks, $b );
+                    continue;
+                }
+
+                /*
+                    * Normal paragraph
+                    */
+                $b = new DocBlock( DocBlock::PARAGRAPH, $paragraphHtml );
+                array_push( $blocks, $b );
+            }
+        }
+    }
+    $bb = new DocBlocks($blocks);
+    return json_encode($bb);
+}
+
+function messageToBlocks(string $message) {
+    $blocks = array();
+    $lines = explode("\n", $message);
+    foreach ($lines as $line) {
+        if (trim($line) === '') {
+            continue;
+        }
+        $b = new DocBlock( DocBlock::PARAGRAPH, htmlspecialchars($line, ENT_QUOTES, 'UTF-8') );
+        array_push( $blocks, $b );
+    }
+    $bb = new DocBlocks($blocks);
+    return json_encode($bb);
 }
 
 ?>
-
 
