@@ -1,5 +1,5 @@
- <?php
-require_once __DIR__ . '/Scripts/Uploader.php';
+<?php
+require_once 'Scripts/uploader.php';
 
 $content = '';
 $error = '';

@@ -62,7 +62,7 @@ function ProcessForm( string $queryAction, int $queryCat, int $queryId, string $
 	{
 		$result = ProcessDeleteArticle($queryAction, $queryCat, $queryId);
 	}
-	elseif( ( !empty($queryCat) && $queryAction == "add" ) || ( !empty($queryId) && $queryAction == "edit" ) )
+	elseif( $queryAction == "upload" || ( !empty($queryCat) && $queryAction == "add" ) || ( !empty($queryId) && $queryAction == "edit" ) )
 	{
 		$result = ProcessUpdateArticle($queryAction, $queryCat, $queryId);
 	}
@@ -204,7 +204,7 @@ function ProcessUpdateArticle(string $queryAction, int $queryCat, int $queryId) 
 
 	$bus = new ArticleBus( $conn );
 	
-	if( $queryAction == "add" )
+	if( $queryAction == "add" || $queryAction == "upload" )
 	{
 		//$queryId = $bus->Add( $article, $_SESSION['player']['Id'] );
 		$queryId = $bus->Add( $article, $_SESSION['player-id'] );
@@ -219,15 +219,25 @@ function ProcessUpdateArticle(string $queryAction, int $queryCat, int $queryId) 
 	
 	// **********
 	
-	$url = $_SERVER["PHP_SELF"];
-	$url .= "?t=" . idate("U");
-	$url .= "&cat=$queryCat&id=$queryId";
-	
-	//$url = htmlspecialchars($url);
-	
 	$content = "<script>";
-	//$content .= "window.location.replace( \"$url\" )";
-	$content .= "history.go(-2);";
+
+	if( $queryAction == "upload" )
+	{
+		$url = $_SERVER["PHP_SELF"];
+		$url .= "?t=" . idate("U");
+		$url .= "&cat=$queryCat&id=$queryId&action=edit&rsn=upload";
+		
+		//$url = htmlspecialchars($url);
+		$content .= "window.location.replace( \"$url\" )";
+	} else {
+		$reason = $_GET["rsn"] ?? '';
+		if( $reason == "upload" ) {
+			$content .= "history.go(-3);";
+		}
+		else {
+			$content .= "history.go(-2);";
+		}
+	}
 	$content .= "</script>";
 
 	$result = new PageResult($content, "Zoomthulhu Docs", "edit");
@@ -513,11 +523,11 @@ function BuildPage( ) : PageResult
 						
 						$result = BuildDeleteArticlePage($article);
 					}
-					elseif( ( $queryAction == "add" && $thePage == "category" ) || ( $queryAction == "edit" && $thePage == "article" ) )
+					elseif( $queryAction == "upload" || ( $queryAction == "add" && $thePage == "category" ) || ( $queryAction == "edit" && $thePage == "article" ) )
 					{
 						$article = new Article();
 						
-						if( $queryAction == "add" )
+						if( $queryAction == "upload" || $queryAction == "add" )
 						{
 							$conn = GetConnection();
 							$bus = new PlayerBus($conn);
@@ -540,7 +550,7 @@ function BuildPage( ) : PageResult
 							CloseConnection( $conn );
 						}
 							
-						$result = BuildEditArticlePage($article);
+						$result = BuildEditArticlePage($article, $queryAction);
 					}
 					elseif( ( $queryAction == "add" && $thePage == "home" ) || ( $queryAction == "edit" && $thePage == "category" ) )
 					{
@@ -655,8 +665,62 @@ function ReadArticle() : Article
 {
 	$article = new Article();
 	
-	$article->Name = $_POST["article-title"];
-	$article->Text = $_POST["article-text"];
+	if( isset($_POST["article-text"]) )
+	{
+		$article->Name = $_POST["article-title"];
+		$article->Text = $_POST["article-text"];
+	}
+	elseif( isset($_FILES["docx"]) )
+	{
+		$path_parts = pathinfo($_FILES['docx']['name']);
+
+		$art_name = "";
+		if( !empty($_POST["is-session"]) && !empty($_POST["chosen-campaign"]) ){
+			$art_name = $_POST["chosen-campaign"] . " - ";
+		}
+		$art_name .= htmlspecialchars( $path_parts['filename'], ENT_QUOTES, 'UTF-8' );
+		$article->Name = $art_name;
+
+		$content = '';
+		if ($_FILES['docx']['error'] !== UPLOAD_ERR_OK) {
+			$content = messageToBlocks('UNABLE TO UPLOAD: There was a error uploading the file.');
+		} else {
+			//$fileName = $_FILES['docx']['name'];
+			//$extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+			$extension = strtolower($path_parts['extension']);
+
+			if ($extension !== 'docx') {
+				$content = messageToBlocks('UNABLE TO UPLOAD: file is not a DOCX file.');
+			} else {
+
+				try {
+					$content = docxToBlocks($_FILES['docx']['tmp_name']);
+
+				} catch (Exception $e) {
+					$content = messageToBlocks('UNABLE TO UPLOAD: Unable to read the DOCX file: ' .
+						$e->getMessage());
+				}
+			}
+		}
+		$article->Text = $content;
+	}
+	else
+	{
+		$msg = "UNABLE TO PROCEED: No text or DOCX file was provided.";
+		$msg .= "\n\nPOST data:";
+		foreach( $_POST as $name => $value )
+		{
+			$msg .= "\n$name = $value";
+		}
+
+		$msg .= "\n\nFILES data:";
+		foreach( $_FILES as $name => $value )
+		{
+			$msg .= "\n$name = " . print_r($value, true);
+		}
+
+		$article->Text = messageToBlocks($msg);
+	}
 	
     if( !empty($_POST["article-game-date"]) ) {
         $raw = $_POST["article-game-date"];
@@ -787,7 +851,7 @@ function BuildDeleteArticlePage( Article $article ) : PageResult
 	return( $result );
 }
 
-function BuildEditArticlePage( Article $article ) : PageResult
+function BuildEditArticlePage( Article $article, string $queryAction ) : PageResult
 {
 	$postToSelf = $_SERVER["PHP_SELF"];
 	
@@ -844,27 +908,45 @@ function BuildEditArticlePage( Article $article ) : PageResult
 	
 	// **********
 	
-	$content = "<form method=\"post\" action=\"$postToSelf\">";
+	$saveButtonText = "Save";
+	$content = "<form method=\"post\" action=\"$postToSelf\" enctype=\"multipart/form-data\">";
 
-	$content .= "<input id=\"article-title\" name=\"article-title\" type=\"text\" value=\"$article->Name\" placeholder=\"Enter the title...\" />";
-    
-    //if( IsSet($article->PostedById) ) $content .= "<p>".$article->PostedById."</p>";
-	$content .= PlayersSelectHtml( "article-post-as", "By: ", $players, $currentId );
-    
-    $gd = "";
-    if( isSet($article->GameDate) )
-        $gd = date("d/m/Y", $article->GameDate);
-    $content .= "<input id=\"article-game-date\" name=\"article-game-date\" type=\"text\" value=\"$gd\" placeholder=\"Date in the game (dd/mm/yyyy)...\" />";
-    
-	$content .= ChooseCampaignHtml( $cats, $article->Categories );
-	$content .= ChooseCategoriesHtml( $cats, $article->Categories );
-	$content .= ChooseArticleTypeHtml( $articleTypes, $article->ArticleTypeId );
+	if( $queryAction == "upload" ) {
+		$content .= ChooseCampaignHtml( $cats, $article->Categories );
+		$content .= ChooseCategoriesHtml( $cats, $article->Categories );
+
+		$content .= "<fieldset>";
+		$content .= "<legend>DOCX File</legend>";
+		//$content .= "<label for=\"docx\">DOCX File:</label>";
+		$content .= "<input type=\"file\" id=\"docx\" name=\"docx\" accept=\".docx\">";
+		$content .= "</fieldset>";
+
+		$content .= "<fieldset>";
+		$content .= "<legend>Properties</legend>";
+		$content .= ChooseIsSessionHtml();
+		$content .= "</fieldset>";
+
+		$saveButtonText = "Upload";
+	}
+	else {
+		$content .= "<input id=\"article-title\" name=\"article-title\" type=\"text\" value=\"$article->Name\" placeholder=\"Enter the title...\" />";
+		$content .= PlayersSelectHtml( "article-post-as", "By: ", $players, $currentId );
 		
-	$content .= "<input type=\"hidden\" id=\"article-text\" name=\"article-text\" />";
-	$content .= "<div id=\"article-text-editor\"></div>";
-	
+		$gd = "";
+		if( isSet($article->GameDate) )
+			$gd = date("d/m/Y", $article->GameDate);
+		$content .= "<input id=\"article-game-date\" name=\"article-game-date\" type=\"text\" value=\"$gd\" placeholder=\"Date in the game (dd/mm/yyyy)...\" />";
+		
+		$content .= ChooseCampaignHtml( $cats, $article->Categories );
+		$content .= ChooseCategoriesHtml( $cats, $article->Categories );
+		$content .= ChooseArticleTypeHtml( $articleTypes, $article->ArticleTypeId );
+
+		$content .= "<input type=\"hidden\" id=\"article-text\" name=\"article-text\" />";
+		$content .= "<div id=\"article-text-editor\"></div>";
+	}
+
     $content .= "<div class=\"buttons-panel\">";
-	$content .= "<button type=\"submit\" onclick=\"SaveEditor();\">Save</button>";	
+	$content .= "<button type=\"submit\" onclick=\"SaveEditor();\">$saveButtonText</button>";	
 	$content .= "<a href=\"$cancelLink\" onclick=\"history.go(-1); return false;\" class=\"cancel\">Cancel</a>";	
     $content .= "</div>";
     
@@ -912,63 +994,74 @@ function BuildEditArticlePage( Article $article ) : PageResult
 	//*/
 	
 	//*  
-	// config for editor.js
-	$content .= "<script>";
-	
-	$content .= "const editor = new EditorJS({ ";
-    $content .= "holder: 'article-text-editor',";
-    $content .= "minHeight: 0,";
-	$content .= "inlineToolbar: ['bold', 'italic'],";
-    //$content .= "tools:{ header: Header, quote: Quote, list: List },";
-    //$content .= "tools:{ header: Header, quote: Quote },";
-	
-	$tools = array( "header"=>"Header", "quote"=>"Quote", "image"=>"SimpleImage", "delimiter"=>"Delimiter", "table"=>"Table", "signature"=>"Signature", "marking"=>"Marking", "investigator"=>"Investigator" );
-	$joiner = "";
-	$content .= "tools:{ ";
-	
-	foreach($tools as $tool=>$module)
-	{
-		$content .= "$joiner $tool: { class: $module, inlineToolbar: true }";
-		$joiner = ",";
-	}
-	
-    //$content .= "tools:{ header: { class: Header, inlineToolbar : true }, quote: { class: Quote, inlineToolbar : true }, image: { class: SimpleImage, inlineToolbar : true } },";
-	$content .= "}, ";
-	$content .= "placeholder: 'Enter the text...'";
-	
-	if( !empty( $article->Text ) )
-	{
-		$content .= ",data: $article->Text";
-	}
-	
-	$content .= " });";
-	
-	$content .= "function SaveEditor(){";
-    $content .= "editor.save().then((output) => {";
-    $content .= "    console.log('output: ', output);";
-    $content .= "    document.getElementById(\"article-text\").value = JSON.stringify(output);";
-    $content .= "}).catch((error) => {";
-    $content .= "    console.log('Saving failed: ', error)";
-    $content .= "});";
-	$content .= "}";
-	
-	$content .= "</script>";
-	
-	// **********
-	
-	$result = new PageResult($content, "Zoomthulhu Docs", "edit");
-	array_push( $result->Scripts, 
-		"https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest", 
-		"https://cdn.jsdelivr.net/npm/@editorjs/header@latest", 
-		"https://cdn.jsdelivr.net/npm/@editorjs/quote@latest",
-		"https://cdn.jsdelivr.net/npm/@editorjs/simple-image@latest",
-		"https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest",
-        "https://cdn.jsdelivr.net/npm/@editorjs/table@latest",
-		"Tools/signature.js?v=001",
-		"Tools/marking.js?v=001",
-		"Tools/investigator.js?v=005"
-	);
+	if ($queryAction == "upload" ) {
+		$content .= "<script>";
+		$content .= "document.querySelectorAll('input[name=\"campaign\"]').forEach(radio => {";
+		$content .= "	radio.addEventListener('change', function() {";
+		$content .= "		document.getElementById('chosen-campaign').value = this.dataset.caption;";
+		$content .= "	});";
+		$content .= "});";
+		$content .= "</script>";
 
+		$result = new PageResult($content, "Zoomthulhu Docs", "edit");
+	} else {
+		// config for editor.js
+		$content .= "<script>";
+		
+		$content .= "const editor = new EditorJS({ ";
+		$content .= "holder: 'article-text-editor',";
+		$content .= "minHeight: 0,";
+		$content .= "inlineToolbar: ['bold', 'italic'],";
+		//$content .= "tools:{ header: Header, quote: Quote, list: List },";
+		//$content .= "tools:{ header: Header, quote: Quote },";
+		
+		$tools = array( "header"=>"Header", "quote"=>"Quote", "image"=>"SimpleImage", "delimiter"=>"Delimiter", "table"=>"Table", "signature"=>"Signature", "marking"=>"Marking", "investigator"=>"Investigator" );
+		$joiner = "";
+		$content .= "tools:{ ";
+		
+		foreach($tools as $tool=>$module)
+		{
+			$content .= "$joiner $tool: { class: $module, inlineToolbar: true }";
+			$joiner = ",";
+		}
+		
+		//$content .= "tools:{ header: { class: Header, inlineToolbar : true }, quote: { class: Quote, inlineToolbar : true }, image: { class: SimpleImage, inlineToolbar : true } },";
+		$content .= "}, ";
+		$content .= "placeholder: 'Enter the text...'";
+		
+		if( !empty( $article->Text ) )
+		{
+			$content .= ",data: $article->Text";
+		}
+		
+		$content .= " });";
+		
+		$content .= "function SaveEditor(){";
+		$content .= "editor.save().then((output) => {";
+		$content .= "    console.log('output: ', output);";
+		$content .= "    document.getElementById(\"article-text\").value = JSON.stringify(output);";
+		$content .= "}).catch((error) => {";
+		$content .= "    console.log('Saving failed: ', error)";
+		$content .= "});";
+		$content .= "}";
+		
+		$content .= "</script>";
+		
+		// **********
+		
+		$result = new PageResult($content, "Zoomthulhu Docs", "edit");
+		array_push( $result->Scripts, 
+			"https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest", 
+			"https://cdn.jsdelivr.net/npm/@editorjs/header@latest", 
+			"https://cdn.jsdelivr.net/npm/@editorjs/quote@latest",
+			"https://cdn.jsdelivr.net/npm/@editorjs/simple-image@latest",
+			"https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest",
+			"https://cdn.jsdelivr.net/npm/@editorjs/table@latest",
+			"Tools/signature.js?v=001",
+			"Tools/marking.js?v=001",
+			"Tools/investigator.js?v=005"
+		);
+	}
 	//"https://cdn.jsdelivr.net/npm/@editorjs/list@latest",  
 	//*/
 	
@@ -1010,8 +1103,10 @@ function BuildEditCategoryPage(Category $category) : PageResult
 
 	//$content .= TextBoxHtml( "category-title", "Title", $category->Name );
 	$content .= "<input id=\"category-title\" name=\"category-title\" type=\"text\" value=\"$category->Name\" placeholder=\"Enter the name...\" />";
+    
 	$content .= ChooseIsCampaignHtml($category);
     $content .= ChooseIsActiveHtml($category);
+
     $content .= "<textarea id=\"category-tagline\" name=\"category-tagline\" placeholder=\"Enter the Tagline...\" >$category->Tagline</textarea>";
 	
     $content .= "<div class=\"buttons-panel\">";
@@ -1042,12 +1137,19 @@ function ChooseCampaignHtml( array $categories, array $chosenCategories )
 		$campaigns = $chosenCampaign;
 	}
 
+	$content .= "<input type=\"hidden\" name=\"chosen-campaign\" id=\"chosen-campaign\"";
+	if( count( $chosenCampaign ) > 0 )
+	{
+		$content .= " value=\"" . $chosenCampaign[0]->Name . "\"";
+	}
+	$content .= ">";	
+	
 	$content .= "<fieldset>";
 	$content .= "<legend>Campaign</legend>";
 	
 	foreach( $campaigns as $cat)
 	{
-		$content .= "<input type=\"radio\" id=\"campaign-$cat->Id\" name=\"campaign\" value=\"$cat->Id\" ";
+		$content .= "<input type=\"radio\" id=\"campaign-$cat->Id\" name=\"campaign\" value=\"$cat->Id\" data-caption=\"$cat->Name\" ";
 		
 		if( in_array($cat->Id, $chosenCategories) )
 		{
@@ -1087,6 +1189,23 @@ function ChooseCategoriesHtml( array $categories, array $chosenCategories )
 	}
 	
 	$content .= "</fieldset>";
+	return( $content );	
+}
+
+function ChooseIsSessionHtml(bool $isSession = false) : string
+{
+	$content = "<div id=\"is-session-holder\">";
+	
+    $content .= "<input type=\"checkbox\" id=\"is-session\" name=\"is-session\" value=\"1\" ";
+	if( $isSession )
+	{
+		$content .= "checked=\"checked\" ";
+	}
+	$content .= " />";
+    $content .= "<label for=\"is-session\">Session Report</label>";
+	
+	$content .= "</div>";
+
 	return( $content );	
 }
 
@@ -1306,7 +1425,11 @@ function BuildHomePage() : PageResult
 	
 	$addUrl = $baseUrl . "action=add";
 	$addUrl = htmlspecialchars($addUrl);
+
+	$uploadUrl = $baseUrl . "action=upload";
+	$uploadUrl = htmlspecialchars($uploadUrl);
 	
+
 	// **********
     
     $currCamp = null;
@@ -1423,11 +1546,21 @@ function BuildHomePage() : PageResult
     
 	$content .= BuildCategoryList(array_reverse($campaigns));
 	$content .= BuildCategoryList($others);
-	
+
+	$buttons = "";
 	if( $_SESSION['Permissions']['CanUpdateCategories'] )
 	{
+		$buttons .= "<a href=\"$addUrl\" title=\"Add Category\" class=\"add\"><span>Add</span></a>";
+	}
+	if( $_SESSION['Permissions']['CanUpdateArticles'] )
+	{
+		$buttons .= "<a href=\"$uploadUrl\" title=\"Upload Article\" class=\"upload\"><span>Upload</span></a>";
+	}
+
+	if( !empty($buttons) )
+	{
 		$content .= "<div class=\"controls\">";
-		$content .= "<a href=\"$addUrl\" title=\"Add Category\" class=\"add\"><span>Add</span></a>";
+		$content .= $buttons;
 		$content .= "</div>";
 	}
 	
@@ -1594,6 +1727,9 @@ function BuildCategoryPage(int $categoryId) : PageResult
 	$addUrl = $baseUrl . "action=add";
 	$addUrl = htmlspecialchars($addUrl);
 	
+	$uploadUrl = $baseUrl . "action=upload";
+	$uploadUrl = htmlspecialchars($uploadUrl);
+	
 	$editUrl = $baseUrl . "action=edit";
 	$editUrl = htmlspecialchars($editUrl);
 	
@@ -1641,6 +1777,7 @@ function BuildCategoryPage(int $categoryId) : PageResult
 	if( $_SESSION['Permissions']['CanUpdateArticles'] || $_SESSION['Permissions']['CanUpdateAllArticles'] )
 	{
 		$content .= "<a href=\"$addUrl\" title=\"Add Article\" class=\"add\"><span>Add</span></a>";
+		$content .= "<a href=\"$uploadUrl\" title=\"Upload Article\" class=\"upload\"><span>Upload</span></a>";
 	}
 	if( $_SESSION['Permissions']['CanUpdateCategories'] )
 	{

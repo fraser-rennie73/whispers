@@ -25,6 +25,7 @@ require 'Scripts/comment.php';
 require 'Scripts/permission.php';
 require 'Scripts/buildPage.php';
 require 'Scripts/sumariser.php';
+require 'Scripts/uploader.php';
 
 //$fbObject = fbInitialise();
 //$page = BuildPage( $fbObject );
