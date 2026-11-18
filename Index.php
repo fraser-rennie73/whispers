@@ -56,7 +56,7 @@ $page = BuildPage( );
 	<link href='https://fonts.googleapis.com/css?family=Smythe' rel='stylesheet' type='text/css'>
 	<link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Jim+Nightshade" rel="stylesheet" type="text/css">
-	<link href="Styles/attachments.css?ver=0536" rel="stylesheet" type="text/css" media="screen"/>
+	<link href="Styles/attachments.css?ver=0540" rel="stylesheet" type="text/css" media="screen"/>
 	<?php 
 		echo $page->ScriptsHtml(); 
 		echo $page->StylesHtml(); 

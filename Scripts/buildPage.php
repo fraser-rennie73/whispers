@@ -1543,9 +1543,10 @@ function BuildHomePage() : PageResult
      */
         
     //$content .= "<div class=\"curr-link\">" . CategoryLink($currLink) . "</div>";
-    
+	$content .= "<div id=\"menus\">";
 	$content .= BuildCategoryList(array_reverse($campaigns));
 	$content .= BuildCategoryList($others);
+	$content .= "</div>";
 
 	$buttons = "";
 	if( $_SESSION['Permissions']['CanUpdateCategories'] )
@@ -1566,7 +1567,7 @@ function BuildHomePage() : PageResult
 	
 	$result = new PageResult($content, "Whispers From the Void", "home");
     array_push( $result->Scripts, 
-        "Scripts/autoScroll.js?ver=006"
+        "Scripts/autoScroll.js?ver=007"
     );
     
     return( $result );
@@ -1758,7 +1759,7 @@ function BuildCategoryPage(int $categoryId) : PageResult
     
 	$content .= "</div>";
     
-	$content .= "<div>";	
+	$content .= "<div class=\"content\">";	
 	$content .= "<h1>$thisName</h1>";
     
     if($cat->Tagline) {
@@ -2646,7 +2647,7 @@ function CategorySessionsLink( Category $category ) : string
 	$u .= "&p=sessions";
 	
 	$content = "<a href=\"$u\">";
-	$content .= "<span>Sessions</span>";
+	$content .= "<span>".SessionsName()."</span>";
 	$content .= "</a>";
 	
 	return( $content );
@@ -2768,15 +2769,25 @@ function BuildArticleList(Category $category, array $articles, array $categories
 {
 	$content = "";
     $important = "";
-	$columns = count($articles);
-	
+    $isCamp = $category->IsCampaign;
+
+	if( $isCamp ) {
+		$cat = $category->Name;
+		$toShow = array_filter($articles, function($a) use($cat) { 
+            $nm = $a->Name;
+			return $nm !== "Gallery" && $nm !== "Investigators" && stripos($nm, $cat) === false; 
+		});
+		$columns = count($toShow);
+	} else {
+		$columns = count($articles);
+	}
+
 	if( $columns > 0 )
 	{
 		$content .= "<ul class=\"column-$columns\">";
         $sess = array();
         $inv = NULL;
         $gall = NULL;
-        $isCamp = $category->IsCampaign;
         
 		foreach($articles as $article)
 		{
@@ -2829,20 +2840,24 @@ function BuildSessionsList(Category $category, array $articles, array $categorie
 {
 	$content = "";
     $important = "";
-	$columns = count($articles);
+	$cat = $category->Name;
+    $sessions = array_filter($articles, function($a) use($cat) { return stripos($a->Name, $cat) !== false; });
+	$columns = count($sessions);
 	
 	if( $columns > 0 )
 	{
 		$content .= "<ul class=\"column-$columns\">";
-        
-		foreach($articles as $article)
-		{
+			/*
             $nm = $article->Name;
             if( stripos($nm, $category->Name) !== false ) {
-                $content .= "<li data-articleid=\"$article->Id\">";
-                $content .= ArticleLink( $category->Id, $article, true, $categories );
-                $content .= "</li>";
             }
+			*/
+        
+		foreach($sessions as $article)
+		{
+			$content .= "<li data-articleid=\"$article->Id\">";
+			$content .= ArticleLink( $category->Id, $article, true, $categories );
+			$content .= "</li>";
 		}
 		$content .= "</ul>";
         
