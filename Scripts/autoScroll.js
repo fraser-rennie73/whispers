@@ -7,7 +7,7 @@ window.addEventListener("load", () => {
     let direction = 1;
     let timer;
     
-    const DELAY_LENGTH = 5000;
+    const DELAY_LENGTH = 10000;
     const offset = heroBar.offsetLeft;
     
     // Prevent our own smooth scrolling from triggering the stop
